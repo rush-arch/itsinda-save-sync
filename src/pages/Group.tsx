@@ -1,10 +1,42 @@
-import { Users, TrendingUp, Calendar, Settings } from "lucide-react";
+import { useState } from "react";
+import { Users, TrendingUp, Calendar, Settings, Bell, CheckCircle2 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ReminderDialog, { ReminderSettings } from "@/components/ReminderDialog";
+import { useToast } from "@/hooks/use-toast";
 
 const Group = () => {
+  const { toast } = useToast();
+  const [reminderDialogOpen, setReminderDialogOpen] = useState(false);
+  const [reminderSet, setReminderSet] = useState(false);
+  const [reminderSettings, setReminderSettings] = useState<ReminderSettings | null>(null);
+
+  const meetingDate = "January 15, 2026 at 10:00 AM";
+
+  const handleSetReminder = (settings: ReminderSettings) => {
+    setReminderSettings(settings);
+    setReminderSet(true);
+    
+    // Format notification methods
+    const methods = [];
+    if (settings.pushEnabled) methods.push("push notification");
+    if (settings.smsEnabled) methods.push("SMS");
+    
+    const timeLabels: Record<string, string> = {
+      "15min": "15 minutes",
+      "1hour": "1 hour",
+      "1day": "1 day",
+      "1week": "1 week",
+    };
+
+    toast({
+      title: "Reminder set! 🎉",
+      description: `You'll receive ${methods.join(" and ")} ${timeLabels[settings.timeBefore]} before the meeting.`,
+      duration: 5000,
+    });
+  };
   const groupStats = [
     { label: "Total Savings", value: "12.5M RWF", change: "+8.2%" },
     { label: "Active Members", value: "24", change: "+2 this month" },
@@ -58,9 +90,28 @@ const Group = () => {
               </div>
               <div className="flex-1">
                 <p className="font-semibold">Next Meeting</p>
-                <p className="text-sm text-muted-foreground">January 15, 2026 at 10:00 AM</p>
+                <p className="text-sm text-muted-foreground">{meetingDate}</p>
+                {reminderSet && reminderSettings && (
+                  <div className="flex items-center gap-1 mt-1 text-success">
+                    <CheckCircle2 className="h-3 w-3" />
+                    <span className="text-xs">Reminder active</span>
+                  </div>
+                )}
               </div>
-              <Button size="sm">Set Reminder</Button>
+              <Button 
+                size="sm" 
+                onClick={() => setReminderDialogOpen(true)}
+                variant={reminderSet ? "outline" : "default"}
+              >
+                {reminderSet ? (
+                  <>
+                    <Bell className="mr-1 h-4 w-4" />
+                    Edit
+                  </>
+                ) : (
+                  "Set Reminder"
+                )}
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -124,6 +175,13 @@ const Group = () => {
           </CardContent>
         </Card>
       </main>
+
+      <ReminderDialog
+        open={reminderDialogOpen}
+        onOpenChange={setReminderDialogOpen}
+        meetingDate={meetingDate}
+        onSetReminder={handleSetReminder}
+      />
 
       <Navigation />
     </div>
