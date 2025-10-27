@@ -14,7 +14,268 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      blog_posts: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          image: string | null
+          preview: string
+          published: boolean | null
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          image?: string | null
+          preview: string
+          published?: boolean | null
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          image?: string | null
+          preview?: string
+          published?: boolean | null
+          title?: string
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          event_date: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          group_id: string | null
+          id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          event_date: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          group_id?: string | null
+          id?: string
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          event_date?: string
+          event_type?: Database["public"]["Enums"]["event_type"]
+          group_id?: string | null
+          id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faqs: {
+        Row: {
+          active: boolean | null
+          answer: string
+          created_at: string | null
+          display_order: number | null
+          id: string
+          question: string
+        }
+        Insert: {
+          active?: boolean | null
+          answer: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          question: string
+        }
+        Update: {
+          active?: boolean | null
+          answer?: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          question?: string
+        }
+        Relationships: []
+      }
+      group_members: {
+        Row: {
+          current_balance: number | null
+          group_id: string
+          id: string
+          joined_at: string | null
+          user_id: string
+        }
+        Insert: {
+          current_balance?: number | null
+          group_id: string
+          id?: string
+          joined_at?: string | null
+          user_id: string
+        }
+        Update: {
+          current_balance?: number | null
+          group_id?: string
+          id?: string
+          joined_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      groups: {
+        Row: {
+          category: Database["public"]["Enums"]["group_category"]
+          created_at: string | null
+          current_balance: number | null
+          description: string | null
+          id: string
+          location: string
+          member_count: number
+          name: string
+          next_saving_date: string | null
+          size: number
+          thumbnail: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["group_category"]
+          created_at?: string | null
+          current_balance?: number | null
+          description?: string | null
+          id?: string
+          location: string
+          member_count?: number
+          name: string
+          next_saving_date?: string | null
+          size?: number
+          thumbnail?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["group_category"]
+          created_at?: string | null
+          current_balance?: number | null
+          description?: string | null
+          id?: string
+          location?: string
+          member_count?: number
+          name?: string
+          next_saving_date?: string | null
+          size?: number
+          thumbnail?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          phone: string | null
+          photo: string | null
+          total_savings: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          photo?: string | null
+          total_savings?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          photo?: string | null
+          total_savings?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          display_order: number | null
+          id: string
+          location: string
+          name: string
+          photo: string | null
+          quote: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          location: string
+          name: string
+          photo?: string | null
+          quote: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          location?: string
+          name?: string
+          photo?: string | null
+          quote?: string
+        }
+        Relationships: []
+      }
+      tips: {
+        Row: {
+          active: boolean | null
+          content: string
+          created_at: string | null
+          display_order: number | null
+          id: string
+        }
+        Insert: {
+          active?: boolean | null
+          content: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+        }
+        Update: {
+          active?: boolean | null
+          content?: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +284,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      event_type: "saving" | "meeting" | "profit_distribution"
+      group_category: "women" | "youth" | "family"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +412,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      event_type: ["saving", "meeting", "profit_distribution"],
+      group_category: ["women", "youth", "family"],
+    },
   },
 } as const

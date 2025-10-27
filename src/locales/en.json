@@ -1,0 +1,67 @@
+{
+  "hero": {
+    "title": "Join thousands building their future together",
+    "joinGroup": "Join a Group",
+    "signIn": "Sign In"
+  },
+  "groupFinder": {
+    "title": "Find Your Perfect Group",
+    "search": "Search groups...",
+    "category": "Category",
+    "location": "Location",
+    "size": "Group Size",
+    "all": "All",
+    "women": "Women",
+    "youth": "Youth",
+    "family": "Family",
+    "join": "Join",
+    "members": "members"
+  },
+  "literacy": {
+    "title": "Financial Literacy Corner"
+  },
+  "news": {
+    "title": "News & Updates",
+    "readMore": "Read More"
+  },
+  "testimonials": {
+    "title": "What Our Members Say"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions"
+  },
+  "trust": {
+    "title": "Trusted By Thousands"
+  },
+  "events": {
+    "title": "Upcoming Events",
+    "saving": "Saving Day",
+    "meeting": "Group Meeting",
+    "profit_distribution": "Profit Distribution"
+  },
+  "social": {
+    "title": "See what 2,000+ members love about Itsinda"
+  },
+  "footer": {
+    "about": "About",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "contact": "Contact",
+    "copyright": "© 2025 Itsinda. All rights reserved."
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "phone": "Phone Number",
+    "password": "Password",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "joinNow": "Join your Itsinda now"
+  },
+  "profile": {
+    "title": "My Profile",
+    "totalSavings": "Total Savings",
+    "myGroups": "My Groups",
+    "viewGroups": "View My Itsindas"
+  }
+}

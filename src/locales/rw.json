@@ -1,0 +1,67 @@
+{
+  "hero": {
+    "title": "Injira mu miryango y'ibihumbi byubaka ejo hazaza hamwe",
+    "joinGroup": "Injira mu itsinda",
+    "signIn": "Kwinjira"
+  },
+  "groupFinder": {
+    "title": "Shakisha Itsinda Ryawe",
+    "search": "Shakisha amatsinda...",
+    "category": "Icyiciro",
+    "location": "Ahantu",
+    "size": "Ingano y'itsinda",
+    "all": "Byose",
+    "women": "Abagore",
+    "youth": "Urubyiruko",
+    "family": "Umuryango",
+    "join": "Injira",
+    "members": "abanyamuryango"
+  },
+  "literacy": {
+    "title": "Imyigishirize y'Imari"
+  },
+  "news": {
+    "title": "Amakuru n'Ivugurura",
+    "readMore": "Soma Byinshi"
+  },
+  "testimonials": {
+    "title": "Ibyo Abanyamuryango Bavuga"
+  },
+  "faq": {
+    "title": "Ibibazo Bikunze Kubazwa"
+  },
+  "trust": {
+    "title": "Byizewe n'Ibihumbi"
+  },
+  "events": {
+    "title": "Ibirori Bizaza",
+    "saving": "Umunsi wo Kuzigama",
+    "meeting": "Inama y'Itsinda",
+    "profit_distribution": "Kugabana Inyungu"
+  },
+  "social": {
+    "title": "Reba ibyo abanyamuryango 2,000+ bakunda kuri Itsinda"
+  },
+  "footer": {
+    "about": "Kuri twe",
+    "terms": "Amategeko",
+    "privacy": "Ibanga",
+    "contact": "Duhamagare",
+    "copyright": "© 2025 Itsinda. Uburenganzira bwose burabitswe."
+  },
+  "auth": {
+    "signIn": "Kwinjira",
+    "signUp": "Kwiyandikisha",
+    "phone": "Nimero ya telefoni",
+    "password": "Ijambo ryibanga",
+    "noAccount": "Ntufite konti?",
+    "hasAccount": "Usanzwe ufite konti?",
+    "joinNow": "Injira muri Itsinda ryawe"
+  },
+  "profile": {
+    "title": "Umwirondoro Wanjye",
+    "totalSavings": "Igiteranyo cy'Imari",
+    "myGroups": "Amatsinda Yanjye",
+    "viewGroups": "Reba Itsinda Ryanjye"
+  }
+}

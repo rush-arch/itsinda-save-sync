@@ -1,17 +1,71 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { 
   User, Phone, Mail, Shield, Bell, HelpCircle, 
-  LogOut, ChevronRight, Camera 
+  LogOut, ChevronRight, Camera, TrendingUp, Users as UsersIcon, Calendar
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
+import HeaderControls from "@/components/HeaderControls";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Profile = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      navigate('/auth');
+      return;
+    }
+    setUser(session.user);
+    fetchProfile(session.user.id);
+  };
+
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') throw error;
+      setProfile(data);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast({
+        title: 'Logged out',
+        description: 'Successfully logged out.',
+      });
+      navigate('/home');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
   const menuItems = [
-    { icon: Phone, label: "Phone Number", value: "+250 788 123 456", action: "edit" },
-    { icon: Mail, label: "Email", value: "marie.k@example.com", action: "edit" },
+    { icon: Phone, label: "Phone Number", value: profile?.phone || "Not set", action: "edit" },
+    { icon: Mail, label: "Email", value: user?.email || "Not set", action: "edit" },
     { icon: Shield, label: "Security", value: "Change PIN", action: "navigate" },
     { icon: Bell, label: "Notifications", value: "Manage preferences", action: "navigate" },
     { icon: HelpCircle, label: "Help & Support", value: "Get help", action: "navigate" },
@@ -21,9 +75,12 @@ const Profile = () => {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="bg-gradient-hero px-4 pt-8 pb-24 rounded-b-3xl">
-        <div className="max-w-lg mx-auto text-center">
-          <h1 className="text-2xl font-bold text-primary-foreground mb-2">Profile</h1>
-          <p className="text-primary-foreground/80 text-sm">Manage your account</p>
+        <div className="max-w-lg mx-auto flex justify-between items-center">
+          <div className="flex-1 text-center">
+            <h1 className="text-2xl font-bold text-primary-foreground mb-2">{t('profile.title')}</h1>
+            <p className="text-primary-foreground/80 text-sm">Manage your account</p>
+          </div>
+          <HeaderControls />
         </div>
       </header>
 
@@ -35,9 +92,9 @@ const Profile = () => {
             <div className="flex flex-col items-center text-center">
               <div className="relative mb-4">
                 <Avatar className="h-24 w-24 ring-4 ring-background">
-                  <AvatarImage src="/placeholder.svg" />
+                  <AvatarImage src={profile?.photo || "/placeholder.svg"} />
                   <AvatarFallback className="bg-gradient-hero text-primary-foreground text-2xl">
-                    MK
+                    {profile?.name?.charAt(0) || user?.email?.charAt(0).toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <Button 
@@ -48,22 +105,35 @@ const Profile = () => {
                   <Camera className="h-4 w-4" />
                 </Button>
               </div>
-              <h2 className="text-xl font-bold mb-1">Marie Kagabo</h2>
-              <p className="text-sm text-muted-foreground mb-4">Member since Jan 2023</p>
+              <h2 className="text-xl font-bold mb-1">{profile?.name || user?.email || 'User'}</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                {user?.created_at && `Member since ${new Date(user.created_at).toLocaleDateString()}`}
+              </p>
               
               {/* Quick Stats */}
               <div className="grid grid-cols-3 gap-4 w-full">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-primary">845K</p>
-                  <p className="text-xs text-muted-foreground">Total Saved</p>
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <TrendingUp className="h-4 w-4 text-primary" />
+                    <p className="text-2xl font-bold text-primary">
+                      {profile?.total_savings?.toLocaleString() || '0'}
+                    </p>
+                  </div>
+                  <p className="text-xs text-muted-foreground">{t('profile.totalSavings')}</p>
+                </div>
+                <div className="text-center cursor-pointer" onClick={() => navigate('/my-groups')}>
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <UsersIcon className="h-4 w-4 text-primary" />
+                    <p className="text-2xl font-bold text-primary">0</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground">{t('profile.myGroups')}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-warning">190K</p>
-                  <p className="text-xs text-muted-foreground">Loans</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-success">24</p>
-                  <p className="text-xs text-muted-foreground">Months</p>
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Calendar className="h-4 w-4 text-success" />
+                    <p className="text-2xl font-bold text-success">0</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Contributions</p>
                 </div>
               </div>
             </div>
@@ -96,6 +166,7 @@ const Profile = () => {
           variant="outline" 
           className="w-full border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
           size="lg"
+          onClick={handleLogout}
         >
           <LogOut className="mr-2 h-5 w-5" />
           Log Out
