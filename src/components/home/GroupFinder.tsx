@@ -45,8 +45,54 @@ const GroupFinder = () => {
     return matchesSearch && matchesCategory && matchesLocation;
   });
 
-  const handleJoin = () => {
-    navigate('/auth');
+  const handleJoin = async (groupId: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    // Check if already a member
+    const { data: existingMember } = await supabase
+      .from('group_members')
+      .select('id')
+      .eq('group_id', groupId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (existingMember) {
+      navigate(`/group/${groupId}`);
+      return;
+    }
+
+    // Check if already requested
+    const { data: existingRequest } = await supabase
+      .from('group_join_requests')
+      .select('id')
+      .eq('group_id', groupId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (existingRequest) {
+      alert('You have already requested to join this group');
+      return;
+    }
+
+    // Send join request
+    const { error } = await supabase
+      .from('group_join_requests')
+      .insert([{
+        group_id: groupId,
+        user_id: user.id
+      }]);
+
+    if (error) {
+      console.error('Error sending join request:', error);
+      alert('Failed to send join request');
+    } else {
+      alert('Join request sent successfully!');
+    }
   };
 
   return (
@@ -114,7 +160,7 @@ const GroupFinder = () => {
                       <Users className="h-4 w-4 mr-1" />
                       {group.member_count} {t('groupFinder.members')}
                     </div>
-                    <Button onClick={handleJoin}>{t('groupFinder.join')}</Button>
+                    <Button onClick={() => handleJoin(group.id)}>{t('groupFinder.join')}</Button>
                   </div>
                 </CardContent>
               </Card>
