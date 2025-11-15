@@ -109,6 +109,41 @@ export type Database = {
         }
         Relationships: []
       }
+      group_join_requests: {
+        Row: {
+          created_at: string | null
+          group_id: string
+          id: string
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          group_id: string
+          id?: string
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          group_id?: string
+          id?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_join_requests_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_members: {
         Row: {
           current_balance: number | null
@@ -141,10 +176,43 @@ export type Database = {
           },
         ]
       }
+      group_messages: {
+        Row: {
+          created_at: string | null
+          group_id: string
+          id: string
+          message: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          group_id: string
+          id?: string
+          message: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          group_id?: string
+          id?: string
+          message?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_messages_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       groups: {
         Row: {
           category: Database["public"]["Enums"]["group_category"]
           created_at: string | null
+          created_by: string | null
           current_balance: number | null
           description: string | null
           id: string
@@ -159,6 +227,7 @@ export type Database = {
         Insert: {
           category: Database["public"]["Enums"]["group_category"]
           created_at?: string | null
+          created_by?: string | null
           current_balance?: number | null
           description?: string | null
           id?: string
@@ -173,6 +242,7 @@ export type Database = {
         Update: {
           category?: Database["public"]["Enums"]["group_category"]
           created_at?: string | null
+          created_by?: string | null
           current_balance?: number | null
           description?: string | null
           id?: string

@@ -136,6 +136,25 @@ const Profile = () => {
                   <p className="text-xs text-muted-foreground">Contributions</p>
                 </div>
               </div>
+              
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-3 w-full mt-4">
+                <Button 
+                  onClick={() => navigate('/my-groups')} 
+                  variant="default"
+                  className="w-full"
+                >
+                  <UsersIcon className="h-4 w-4 mr-2" />
+                  My Groups
+                </Button>
+                <Button 
+                  onClick={() => navigate('/create-group')} 
+                  variant="outline"
+                  className="w-full"
+                >
+                  Create Group
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
