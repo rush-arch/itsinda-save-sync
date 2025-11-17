@@ -4,15 +4,20 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, Calendar, DollarSign, ArrowLeft } from 'lucide-react';
+import { Users, Calendar, DollarSign, ArrowLeft, MessageSquare, Shield } from 'lucide-react';
 import { format } from 'date-fns';
 import HeaderControls from '@/components/HeaderControls';
+import GroupChat from '@/components/GroupChat';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import JoinRequests from '@/components/JoinRequests';
 
 const MyGroups = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [groups, setGroups] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [expandedGroupId, setExpandedGroupId] = useState<string | null>(null);
 
   useEffect(() => {
     checkAuth();
@@ -31,6 +36,8 @@ const MyGroups = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      setCurrentUserId(user.id);
+
       const { data, error } = await supabase
         .from('group_members')
         .select(`
@@ -46,6 +53,14 @@ const MyGroups = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const isGroupAdmin = (groupCreatedBy: string) => {
+    return currentUserId === groupCreatedBy;
+  };
+
+  const toggleGroupExpansion = (groupId: string) => {
+    setExpandedGroupId(expandedGroupId === groupId ? null : groupId);
   };
 
   return (
@@ -72,42 +87,85 @@ const MyGroups = () => {
             <Button onClick={() => navigate('/home#groups')}>Find a Group</Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="space-y-6">
             {groups.map((membership) => (
               <Card key={membership.id}>
                 <CardHeader>
-                  <CardTitle>{membership.groups.name}</CardTitle>
-                  <CardDescription>{membership.groups.location}</CardDescription>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        {membership.groups.name}
+                        {isGroupAdmin(membership.groups.created_by) && (
+                          <span className="text-primary" aria-label="Admin">
+                            <Shield className="h-4 w-4" />
+                          </span>
+                        )}
+                      </CardTitle>
+                      <CardDescription>{membership.groups.location}</CardDescription>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => toggleGroupExpansion(membership.groups.id)}
+                    >
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      {expandedGroupId === membership.groups.id ? 'Hide Chat' : 'Show Chat'}
+                    </Button>
+                  </div>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-muted-foreground">
-                      <DollarSign className="h-4 w-4" />
-                      Balance
-                    </span>
-                    <span className="font-semibold">
-                      {membership.current_balance.toLocaleString()} RWF
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-muted-foreground">
-                      <Users className="h-4 w-4" />
-                      Members
-                    </span>
-                    <span>{membership.groups.member_count}</span>
-                  </div>
-                  {membership.groups.next_saving_date && (
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="flex items-center justify-between text-sm">
                       <span className="flex items-center gap-2 text-muted-foreground">
-                        <Calendar className="h-4 w-4" />
-                        Next Saving
+                        <DollarSign className="h-4 w-4" />
+                        Balance
                       </span>
-                      <span>{format(new Date(membership.groups.next_saving_date), 'PP')}</span>
+                      <span className="font-semibold">
+                        {membership.current_balance.toLocaleString()} RWF
+                      </span>
                     </div>
-                  )}
-                  <Button className="w-full mt-4" onClick={() => navigate('/dashboard')}>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="flex items-center gap-2 text-muted-foreground">
+                        <Users className="h-4 w-4" />
+                        Members
+                      </span>
+                      <span>{membership.groups.member_count}</span>
+                    </div>
+                    {membership.groups.next_saving_date && (
+                      <div className="flex items-center justify-between text-sm col-span-2">
+                        <span className="flex items-center gap-2 text-muted-foreground">
+                          <Calendar className="h-4 w-4" />
+                          Next Saving
+                        </span>
+                        <span>{format(new Date(membership.groups.next_saving_date), 'PP')}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <Button className="w-full" onClick={() => navigate('/dashboard')}>
                     View Dashboard
                   </Button>
+
+                  {expandedGroupId === membership.groups.id && (
+                    <div className="pt-4 border-t">
+                      <Tabs defaultValue="chat" className="w-full">
+                        <TabsList className={`grid w-full ${isGroupAdmin(membership.groups.created_by) ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                          <TabsTrigger value="chat">Chat</TabsTrigger>
+                          {isGroupAdmin(membership.groups.created_by) && (
+                            <TabsTrigger value="requests">Requests</TabsTrigger>
+                          )}
+                        </TabsList>
+                        <TabsContent value="chat">
+                          <GroupChat groupId={membership.groups.id} />
+                        </TabsContent>
+                        {isGroupAdmin(membership.groups.created_by) && (
+                          <TabsContent value="requests">
+                            <JoinRequests groupId={membership.groups.id} />
+                          </TabsContent>
+                        )}
+                      </Tabs>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}

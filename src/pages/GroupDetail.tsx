@@ -81,7 +81,14 @@ const GroupDetail = () => {
 
         {/* Header */}
         <header className="bg-gradient-accent px-6 py-8 rounded-3xl mb-6">
-          <h1 className="text-3xl font-bold text-accent-foreground">{group.name}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-bold text-accent-foreground">{group.name}</h1>
+            {isAdmin && (
+              <span className="bg-primary/20 text-primary px-3 py-1 rounded-full text-xs font-semibold">
+                Admin
+              </span>
+            )}
+          </div>
           <p className="text-accent-foreground/70 text-sm mt-1">{group.location}</p>
           
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
