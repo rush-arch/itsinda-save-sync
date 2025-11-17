@@ -39,7 +39,7 @@ const CreateGroup = () => {
         return;
       }
 
-      const { error } = await supabase.from("groups").insert([{
+      const { data: groupData, error: groupError } = await supabase.from("groups").insert([{
         name: formData.name,
         description: formData.description,
         location: formData.location,
@@ -48,13 +48,22 @@ const CreateGroup = () => {
         member_count: 1,
         current_balance: 0,
         created_by: user.id
+      }]).select().single();
+
+      if (groupError) throw groupError;
+
+      // Add creator as a member of the group
+      const { error: memberError } = await supabase.from("group_members").insert([{
+        group_id: groupData.id,
+        user_id: user.id,
+        current_balance: 0
       }]);
 
-      if (error) throw error;
+      if (memberError) throw memberError;
 
       toast({
         title: "Success",
-        description: "Group created successfully!"
+        description: "Group created successfully! You are now the admin of this group."
       });
 
       navigate("/my-groups");
