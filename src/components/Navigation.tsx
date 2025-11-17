@@ -6,10 +6,10 @@ const Navigation = () => {
   const location = useLocation();
   
   const navItems = [
-    { icon: Home, label: "Home", path: "/" },
+    { icon: Home, label: "Home", path: "/home" },
     { icon: PiggyBank, label: "Savings", path: "/savings" },
     { icon: HandCoins, label: "Loans", path: "/loans" },
-    { icon: Users, label: "Group", path: "/group" },
+    { icon: Users, label: "Groups", path: "/my-groups" },
     { icon: User, label: "Profile", path: "/profile" },
   ];
 
