@@ -3,16 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { 
   User, Phone, Mail, Shield, Bell, HelpCircle, 
-  LogOut, ChevronRight, Camera, TrendingUp, Users as UsersIcon, Calendar
+  LogOut, ChevronRight, TrendingUp, Users as UsersIcon, Calendar, Receipt
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import HeaderControls from "@/components/HeaderControls";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import ProfilePhotoUpload from "@/components/ProfilePhotoUpload";
 
 const Profile = () => {
   const { t } = useTranslation();
@@ -64,12 +64,19 @@ const Profile = () => {
   };
 
   const menuItems = [
+    { icon: Receipt, label: "Transactions", value: "View history", action: "transactions" },
     { icon: Phone, label: "Phone Number", value: profile?.phone || "Not set", action: "edit" },
     { icon: Mail, label: "Email", value: user?.email || "Not set", action: "edit" },
     { icon: Shield, label: "Security", value: "Change PIN", action: "navigate" },
     { icon: Bell, label: "Notifications", value: "Manage preferences", action: "navigate" },
     { icon: HelpCircle, label: "Help & Support", value: "Get help", action: "navigate" },
   ];
+
+  const handleMenuItemClick = (action: string) => {
+    if (action === "transactions") {
+      navigate("/transactions");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -90,20 +97,12 @@ const Profile = () => {
         <Card className="mb-6 shadow-lg">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center text-center">
-              <div className="relative mb-4">
-                <Avatar className="h-24 w-24 ring-4 ring-background">
-                  <AvatarImage src={profile?.photo || "/placeholder.svg"} />
-                  <AvatarFallback className="bg-gradient-hero text-primary-foreground text-2xl">
-                    {profile?.name?.charAt(0) || user?.email?.charAt(0).toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <Button 
-                  size="icon" 
-                  className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full shadow-md"
-                  variant="default"
-                >
-                  <Camera className="h-4 w-4" />
-                </Button>
+              <div className="mb-4">
+                <ProfilePhotoUpload
+                  currentPhoto={profile?.photo}
+                  userName={profile?.name || user?.email || 'User'}
+                  onPhotoUpdate={(url) => setProfile({ ...profile, photo: url })}
+                />
               </div>
               <h2 className="text-xl font-bold mb-1">{profile?.name || user?.email || 'User'}</h2>
               <p className="text-sm text-muted-foreground mb-4">
@@ -164,7 +163,10 @@ const Profile = () => {
           <CardContent className="p-0">
             {menuItems.map((item, index) => (
               <div key={index}>
-                <button className="w-full flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors text-left">
+                <button 
+                  className="w-full flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors text-left"
+                  onClick={() => handleMenuItemClick(item.action)}
+                >
                   <div className="p-2 bg-primary/10 rounded-lg">
                     <item.icon className="h-5 w-5 text-primary" />
                   </div>

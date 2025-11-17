@@ -75,6 +75,13 @@ const JoinRequests = ({ groupId }: JoinRequestsProps) => {
 
       if (updateError) throw updateError;
 
+      // Get group name for notification
+      const { data: groupData } = await supabase
+        .from("groups")
+        .select("name, member_count")
+        .eq("id", groupId)
+        .single();
+
       // If approved, add user to group_members
       if (status === 'approved') {
         const { error: memberError } = await supabase
@@ -88,18 +95,30 @@ const JoinRequests = ({ groupId }: JoinRequestsProps) => {
         if (memberError) throw memberError;
 
         // Update group member count
-        const { data: groupData } = await supabase
-          .from("groups")
-          .select("member_count")
-          .eq("id", groupId)
-          .single();
-
         if (groupData) {
           await supabase
             .from("groups")
             .update({ member_count: (groupData.member_count || 0) + 1 })
             .eq("id", groupId);
         }
+
+        // Send notification
+        await supabase.rpc('create_notification', {
+          p_user_id: userId,
+          p_type: 'join_request_approved',
+          p_title: 'Join Request Approved! 🎉',
+          p_message: `Your request to join ${groupData?.name || 'the group'} has been approved.`,
+          p_related_id: groupId
+        });
+      } else {
+        // Send rejection notification
+        await supabase.rpc('create_notification', {
+          p_user_id: userId,
+          p_type: 'join_request_rejected',
+          p_title: 'Join Request Declined',
+          p_message: `Your request to join ${groupData?.name || 'the group'} has been declined.`,
+          p_related_id: groupId
+        });
       }
 
       toast({

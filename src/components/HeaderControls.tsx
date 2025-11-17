@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import NotificationBell from './NotificationBell';
 
 const HeaderControls = () => {
   const { theme, language, toggleTheme, setLanguage } = useAppStore();
@@ -20,6 +21,7 @@ const HeaderControls = () => {
 
   return (
     <div className="flex items-center gap-2">
+      <NotificationBell />
       <Button variant="ghost" size="icon" onClick={toggleTheme}>
         {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
       </Button>

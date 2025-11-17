@@ -17,6 +17,7 @@ import Profile from "./pages/Profile";
 import MyGroups from "./pages/MyGroups";
 import CreateGroup from "./pages/CreateGroup";
 import GroupDetail from "./pages/GroupDetail";
+import Transactions from "./pages/Transactions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => {
             <Route path="/group" element={<Group />} />
             <Route path="/group/:id" element={<GroupDetail />} />
             <Route path="/create-group" element={<CreateGroup />} />
+            <Route path="/transactions" element={<Transactions />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/my-groups" element={<MyGroups />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
