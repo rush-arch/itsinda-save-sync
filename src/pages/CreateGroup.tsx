@@ -142,7 +142,6 @@ const CreateGroup = () => {
                     <SelectItem value="women">Women</SelectItem>
                     <SelectItem value="youth">Youth</SelectItem>
                     <SelectItem value="family">Family</SelectItem>
-                    <SelectItem value="general">General</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
