@@ -8,6 +8,7 @@ import { ArrowLeft, Users, TrendingUp } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import GroupChat from "@/components/GroupChat";
 import JoinRequests from "@/components/JoinRequests";
+import DiscussionPanel from "@/components/DiscussionPanel";
 
 const GroupDetail = () => {
   const { id } = useParams();
@@ -115,9 +116,10 @@ const GroupDetail = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="chat">Chat</TabsTrigger>
+            <TabsTrigger value="discussion">Discussion</TabsTrigger>
             {isAdmin && <TabsTrigger value="requests">Requests</TabsTrigger>}
           </TabsList>
 
@@ -134,6 +136,10 @@ const GroupDetail = () => {
 
           <TabsContent value="chat">
             {id && <GroupChat groupId={id} />}
+          </TabsContent>
+
+          <TabsContent value="discussion">
+            {id && <DiscussionPanel groupId={id} groupName={group.name} />}
           </TabsContent>
 
           {isAdmin && (
