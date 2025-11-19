@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Users, MapPin, Tag, TrendingUp, Calendar } from "lucide-react";
 import Navigation from "@/components/Navigation";
+import { Separator } from "@/components/ui/separator";
 
 const CreateGroup = () => {
   const navigate = useNavigate();
@@ -20,7 +21,9 @@ const CreateGroup = () => {
     description: "",
     location: "",
     category: "",
-    size: ""
+    size: "",
+    contribution_amount: "",
+    meeting_frequency: "weekly"
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,75 +95,163 @@ const CreateGroup = () => {
           Back
         </Button>
 
-        <Card>
+        <Card className="animate-fade-in">
           <CardHeader>
-            <CardTitle>Create New Group</CardTitle>
+            <CardTitle className="text-2xl">Create New Group</CardTitle>
+            <CardDescription>
+              Set up your savings group with all the necessary details
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="name">Group Name</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                />
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Basic Information Section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-lg font-semibold">
+                  <Tag className="h-5 w-5 text-primary" />
+                  <span>Basic Information</span>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="name">Group Name *</Label>
+                  <Input
+                    id="name"
+                    placeholder="e.g., Women Empowerment Savings"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                    className="transition-all focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Describe your group's purpose and goals..."
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={3}
+                    className="transition-all focus:ring-2 focus:ring-primary resize-none"
+                  />
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={3}
-                />
+              <Separator />
+
+              {/* Location & Category Section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-lg font-semibold">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  <span>Location & Category</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="location">Location *</Label>
+                    <Input
+                      id="location"
+                      placeholder="e.g., Kigali, Gasabo"
+                      value={formData.location}
+                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                      required
+                      className="transition-all focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category *</Label>
+                    <Select
+                      value={formData.category}
+                      onValueChange={(value) => setFormData({ ...formData, category: value })}
+                      required
+                    >
+                      <SelectTrigger className="transition-all focus:ring-2 focus:ring-primary">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="women">Women</SelectItem>
+                        <SelectItem value="youth">Youth</SelectItem>
+                        <SelectItem value="family">Family</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="location">Location</Label>
-                <Input
-                  id="location"
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  required
-                />
+              <Separator />
+
+              {/* Group Settings Section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-lg font-semibold">
+                  <Users className="h-5 w-5 text-primary" />
+                  <span>Group Settings</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="size">Maximum Members *</Label>
+                    <Input
+                      id="size"
+                      type="number"
+                      min="5"
+                      max="100"
+                      placeholder="e.g., 20"
+                      value={formData.size}
+                      onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                      required
+                      className="transition-all focus:ring-2 focus:ring-primary"
+                    />
+                    <p className="text-xs text-muted-foreground">Between 5 and 100 members</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="contribution">Monthly Contribution (RWF)</Label>
+                    <div className="relative">
+                      <TrendingUp className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="contribution"
+                        type="number"
+                        min="0"
+                        placeholder="e.g., 5000"
+                        value={formData.contribution_amount}
+                        onChange={(e) => setFormData({ ...formData, contribution_amount: e.target.value })}
+                        className="pl-10 transition-all focus:ring-2 focus:ring-primary"
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">Optional: Set a regular contribution amount</p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="frequency">Meeting Frequency</Label>
+                  <Select
+                    value={formData.meeting_frequency}
+                    onValueChange={(value) => setFormData({ ...formData, meeting_frequency: value })}
+                  >
+                    <SelectTrigger className="transition-all focus:ring-2 focus:ring-primary">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                      <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="category">Category</Label>
-                <Select
-                  value={formData.category}
-                  onValueChange={(value) => setFormData({ ...formData, category: value })}
-                  required
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="women">Women</SelectItem>
-                    <SelectItem value="youth">Youth</SelectItem>
-                    <SelectItem value="family">Family</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="size">Maximum Members</Label>
-                <Input
-                  id="size"
-                  type="number"
-                  min="5"
-                  max="100"
-                  value={formData.size}
-                  onChange={(e) => setFormData({ ...formData, size: e.target.value })}
-                  required
-                />
-              </div>
-
-              <Button type="submit" disabled={loading} className="w-full">
-                {loading ? "Creating..." : "Create Group"}
+              <Button 
+                type="submit" 
+                disabled={loading} 
+                className="w-full h-12 text-lg transition-all hover:scale-[1.02]"
+              >
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="animate-pulse-subtle">Creating...</span>
+                  </span>
+                ) : (
+                  "Create Group"
+                )}
               </Button>
             </form>
           </CardContent>

@@ -9,6 +9,8 @@ import Navigation from "@/components/Navigation";
 import GroupChat from "@/components/GroupChat";
 import JoinRequests from "@/components/JoinRequests";
 import DiscussionPanel from "@/components/DiscussionPanel";
+import GroupSettings from "@/components/GroupSettings";
+import MembersList from "@/components/MembersList";
 
 const GroupDetail = () => {
   const { id } = useParams();
@@ -116,10 +118,12 @@ const GroupDetail = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="chat">Chat</TabsTrigger>
             <TabsTrigger value="discussion">Discussion</TabsTrigger>
+            <TabsTrigger value="members">Members</TabsTrigger>
+            {isAdmin && <TabsTrigger value="settings">Settings</TabsTrigger>}
             {isAdmin && <TabsTrigger value="requests">Requests</TabsTrigger>}
           </TabsList>
 
@@ -141,6 +145,16 @@ const GroupDetail = () => {
           <TabsContent value="discussion">
             {id && <DiscussionPanel groupId={id} groupName={group.name} />}
           </TabsContent>
+
+          <TabsContent value="members">
+            {id && <MembersList groupId={id} isAdmin={isAdmin} creatorId={group.created_by} />}
+          </TabsContent>
+
+          {isAdmin && (
+            <TabsContent value="settings">
+              {id && <GroupSettings groupId={id} isAdmin={isAdmin} />}
+            </TabsContent>
+          )}
 
           {isAdmin && (
             <TabsContent value="requests">
