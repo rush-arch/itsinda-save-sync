@@ -19,6 +19,7 @@ import CreateGroup from "./pages/CreateGroup";
 import GroupDetail from "./pages/GroupDetail";
 import Transactions from "./pages/Transactions";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -39,15 +40,15 @@ const App = () => {
             <Route path="/" element={<Loading />} />
             <Route path="/home" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/savings" element={<Savings />} />
-            <Route path="/loans" element={<Loans />} />
-            <Route path="/group" element={<Group />} />
-            <Route path="/group/:id" element={<GroupDetail />} />
-            <Route path="/create-group" element={<CreateGroup />} />
-            <Route path="/transactions" element={<Transactions />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/my-groups" element={<MyGroups />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/savings" element={<ProtectedRoute><Savings /></ProtectedRoute>} />
+            <Route path="/loans" element={<ProtectedRoute><Loans /></ProtectedRoute>} />
+            <Route path="/group" element={<ProtectedRoute><Group /></ProtectedRoute>} />
+            <Route path="/group/:id" element={<ProtectedRoute><GroupDetail /></ProtectedRoute>} />
+            <Route path="/create-group" element={<ProtectedRoute><CreateGroup /></ProtectedRoute>} />
+            <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/my-groups" element={<ProtectedRoute><MyGroups /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
