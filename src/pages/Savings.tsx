@@ -1,10 +1,39 @@
+import { useState, useEffect } from "react";
 import { ArrowUpRight, Clock, CheckCircle2, XCircle } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { PaymentDialog } from "@/components/PaymentDialog";
+import { supabase } from "@/integrations/supabase/client";
 
 const Savings = () => {
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [totalSavings, setTotalSavings] = useState(0);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    fetchSavingsData();
+  }, []);
+
+  const fetchSavingsData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("total_savings")
+        .eq("user_id", user.id)
+        .single();
+
+      setTotalSavings(profile?.total_savings || 0);
+    } catch (error) {
+      console.error("Error fetching savings:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const savingsHistory = [
     { id: 1, date: "Dec 20, 2025", amount: "50,000 RWF", status: "completed", method: "MTN Mobile Money" },
     { id: 2, date: "Nov 20, 2025", amount: "50,000 RWF", status: "completed", method: "Airtel Money" },
@@ -49,10 +78,12 @@ const Savings = () => {
           {/* Total Saved Card */}
           <div className="bg-card/95 backdrop-blur-sm rounded-2xl p-5 shadow-lg">
             <p className="text-sm text-muted-foreground mb-1">Total Saved</p>
-            <p className="text-3xl font-bold text-foreground mb-4">845,000 RWF</p>
+            <p className="text-3xl font-bold text-foreground mb-4">
+              {loading ? "..." : `${totalSavings.toLocaleString()} RWF`}
+            </p>
             <div className="flex items-center gap-2 text-success text-sm">
               <ArrowUpRight className="h-4 w-4" />
-              <span>+12% from last month</span>
+              <span>Track your savings progress</span>
             </div>
           </div>
         </div>
@@ -64,9 +95,16 @@ const Savings = () => {
         <Button 
           className="w-full bg-gradient-success text-success-foreground font-semibold"
           size="lg"
+          onClick={() => setPaymentDialogOpen(true)}
         >
           Make a Payment
         </Button>
+
+        <PaymentDialog
+          open={paymentDialogOpen}
+          onOpenChange={setPaymentDialogOpen}
+          onSuccess={fetchSavingsData}
+        />
 
         {/* Savings Schedule */}
         <Card>
